@@ -6,10 +6,10 @@ import (
 
 //Cube is an OLAP cube
 type Cube struct {
-	Dimensions []string
-	Points     [][]interface{}
-	Fields     []string
-	Data       [][]interface{}
+	Dimensions []string        `json:"dimensions,omitempty"`
+	Points     [][]interface{} `json:"points,omitempty"`
+	Fields     []string        `json:"fields,omitempty"`
+	Data       [][]interface{} `json:"data,omitempty"`
 }
 
 //Headers return the name of the columns for the Rows method.
