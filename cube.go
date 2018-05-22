@@ -2,6 +2,7 @@ package olap
 
 import (
 	"errors"
+	"fmt"
 )
 
 //Cube is an OLAP cube
@@ -192,15 +193,15 @@ func (c Cube) Slice(dimension string, value interface{}) Cube {
 }
 
 // Dice operator picks a subcube by choosing a specific values of multiple dimensions.
-func (c Cube) Dice(selector func(point []interface{}) bool) Cube {
+func (c Cube) Dice(selector func(c Cube, idx int) bool) Cube {
 
 	newCube := Cube{}
 	newCube.Dimensions = copyStringArray(c.Dimensions)
 	newCube.Fields = copyStringArray(c.Fields)
 
 	// Points + Data
-	for i, pt := range c.Points {
-		if selector(pt) {
+	for i := range c.Points {
+		if selector(c, i) {
 			newPt := copyInterfaceArray(c.Points[i])
 			newData := copyInterfaceArray(c.Data[i])
 
@@ -214,6 +215,10 @@ func (c Cube) Dice(selector func(point []interface{}) bool) Cube {
 
 //Aggregator is a summarization method to be used by RollUp operator
 type Aggregator func(aggregate, value []interface{}) []interface{}
+
+func key(pt []interface{}) string {
+	return fmt.Sprint(pt...)
+}
 
 //RollUp operator summarize the data along multiple dimensions.
 //Ex: rollup(['year','month'], ['flights'], (sum, value) => [sum[0]+value[0]], [0])
@@ -230,6 +235,8 @@ func (c Cube) RollUp(dimensions []string, fields []string, aggregator Aggregator
 		dimIndexes = append(dimIndexes, dimIndex)
 	}
 
+	mapKeyIndex := make(map[string]int)
+
 	for i, originalPoint := range c.Points {
 
 		newPt := make([]interface{}, 0, len(dimensions))
@@ -238,31 +245,20 @@ func (c Cube) RollUp(dimensions []string, fields []string, aggregator Aggregator
 			newPt = append(newPt, k)
 		}
 
-		found := -1
-		for j, pt := range newCube.Points {
-			match := true
-			for k, key := range pt {
-				if key != newPt[k] {
-					match = false
-				}
-			}
-			if match {
-				found = j
-				break
-			}
-		}
-
-		if found < 0 {
-			found = len(newCube.Points)
+		k := key(newPt)
+		idx, found := mapKeyIndex[k]
+		if !found {
+			idx = len(newCube.Points)
+			mapKeyIndex[k] = idx
 			newCube.Points = append(newCube.Points, newPt)
 			newCube.Data = append(newCube.Data, copyInterfaceArray(initialValue))
-
 		}
-		value := newCube.Data[found]
+
+		value := newCube.Data[idx]
 
 		newValue := aggregator(value, c.Data[i])
 
-		newCube.Data[found] = newValue
+		newCube.Data[idx] = newValue
 	}
 
 	return newCube

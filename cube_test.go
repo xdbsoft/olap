@@ -94,8 +94,8 @@ func TestSlice(t *testing.T) {
 func TestDice(t *testing.T) {
 
 	c := createCube()
-	c = c.Dice(func(point []interface{}) bool {
-		return point[1] == "Feb"
+	c = c.Dice(func(cube Cube, idx int) bool {
+		return cube.Points[idx][1] == "Feb"
 	})
 
 	//IsValid
