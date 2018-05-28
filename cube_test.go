@@ -10,18 +10,18 @@ func createCube() Cube {
 		Dimensions: []string{"Year", "Month", "Product"},
 		Fields:     []string{"Count", "PercentOk"},
 		Points: [][]interface{}{
-			[]interface{}{2018, "Jan", "A"},
-			[]interface{}{2018, "Feb", "A"},
-			[]interface{}{2018, "Feb", "B"},
-			[]interface{}{2017, "Jan", "A"},
-			[]interface{}{2017, "Jan", "B"},
+			{2018, "Jan", "A"},
+			{2018, "Feb", "A"},
+			{2018, "Feb", "B"},
+			{2017, "Jan", "A"},
+			{2017, "Jan", "B"},
 		},
 		Data: [][]interface{}{
-			[]interface{}{100, 0.05},
-			[]interface{}{300, 0.01},
-			[]interface{}{100, 0.1},
-			[]interface{}{200, 0.5},
-			[]interface{}{200, 0.1},
+			{100, 0.05},
+			{300, 0.01},
+			{100, 0.1},
+			{200, 0.5},
+			{200, 0.1},
 		},
 	}
 
@@ -48,11 +48,11 @@ func TestCreation(t *testing.T) {
 	//Rows
 	rows := c.Rows()
 	expectedRows := [][]interface{}{
-		[]interface{}{2018, "Jan", "A", 100, 0.05},
-		[]interface{}{2018, "Feb", "A", 300, 0.01},
-		[]interface{}{2018, "Feb", "B", 100, 0.1},
-		[]interface{}{2017, "Jan", "A", 200, 0.5},
-		[]interface{}{2017, "Jan", "B", 200, 0.1},
+		{2018, "Jan", "A", 100, 0.05},
+		{2018, "Feb", "A", 300, 0.01},
+		{2018, "Feb", "B", 100, 0.1},
+		{2017, "Jan", "A", 200, 0.5},
+		{2017, "Jan", "B", 200, 0.1},
 	}
 
 	if !reflect.DeepEqual(expectedRows, rows) {
@@ -81,9 +81,9 @@ func TestSlice(t *testing.T) {
 	//Rows
 	rows := c.Rows()
 	expectedRows := [][]interface{}{
-		[]interface{}{"Jan", "A", 100, 0.05},
-		[]interface{}{"Feb", "A", 300, 0.01},
-		[]interface{}{"Feb", "B", 100, 0.1},
+		{"Jan", "A", 100, 0.05},
+		{"Feb", "A", 300, 0.01},
+		{"Feb", "B", 100, 0.1},
 	}
 
 	if !reflect.DeepEqual(expectedRows, rows) {
@@ -114,8 +114,8 @@ func TestDice(t *testing.T) {
 	//Rows
 	rows := c.Rows()
 	expectedRows := [][]interface{}{
-		[]interface{}{2018, "Feb", "A", 300, 0.01},
-		[]interface{}{2018, "Feb", "B", 100, 0.1},
+		{2018, "Feb", "A", 300, 0.01},
+		{2018, "Feb", "B", 100, 0.1},
 	}
 
 	if !reflect.DeepEqual(expectedRows, rows) {
@@ -164,8 +164,8 @@ func TestRollUp_singleDimension(t *testing.T) {
 	//Rows
 	rows := c.Rows()
 	expectedRows := [][]interface{}{
-		[]interface{}{2018, 500, 0.036},
-		[]interface{}{2017, 400, 0.3},
+		{2018, 500, 0.036},
+		{2017, 400, 0.3},
 	}
 
 	if !reflect.DeepEqual(expectedRows, rows) {
@@ -194,9 +194,9 @@ func TestRollUp_multiDimensions(t *testing.T) {
 	//Rows
 	rows := c.Rows()
 	expectedRows := [][]interface{}{
-		[]interface{}{2018, "Jan", 100, 0.05},
-		[]interface{}{2018, "Feb", 400, 0.0325},
-		[]interface{}{2017, "Jan", 400, 0.3},
+		{2018, "Jan", 100, 0.05},
+		{2018, "Feb", 400, 0.0325},
+		{2017, "Jan", 400, 0.3},
 	}
 
 	if !reflect.DeepEqual(expectedRows, rows) {
